@@ -26,7 +26,7 @@ import {
     SimpleChanges,
     ViewEncapsulation
 } from '@angular/core';
-import { MinimalNodeEntryEntity } from 'alfresco-js-api';
+import { NodeEntry } from 'alfresco-js-api';
 import {
     AlfrescoApiService,
     AlfrescoTranslationService,
@@ -261,13 +261,13 @@ export class UploadButtonComponent implements OnInit, OnChanges, NodePermissionS
     }
 
     // TODO: move to AlfrescoContentService
-    getFolderNode(nodeId: string): Observable<MinimalNodeEntryEntity> {
-        let opts: any = {
+    private getFolderNode(nodeId: string): Observable<NodeEntry> {
+        const opts: any = {
             includeSource: true,
             include: ['allowableOperations']
         };
 
-        return Observable.fromPromise(this.apiService.getInstance().nodes.getNodeInfo(nodeId, opts))
+        return Observable.fromPromise(this.apiService.nodesApi.getNode(nodeId, opts))
             .catch(err => this.handleError(err));
     }
 

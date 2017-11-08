@@ -16,6 +16,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NodeEntry } from 'alfresco-js-api';
 import { AlfrescoApiService } from 'ng2-alfresco-core';
 import { Observable } from 'rxjs/Rx';
 import { NodeMetadata } from '../models/node-metadata.model';
@@ -32,7 +33,7 @@ export class NodeService {
      * @returns NodeMetadata
      */
     public getNodeMetadata(nodeId: string): Observable<NodeMetadata> {
-        return Observable.fromPromise(this.apiService.getInstance().nodes.getNodeInfo(nodeId)).map(this.cleanMetadataFromSemicolon);
+        return Observable.fromPromise(this.apiService.nodesApi.getNode(nodeId)).map(this.cleanMetadataFromSemicolon);
     }
 
     /**
@@ -43,7 +44,7 @@ export class NodeService {
      * @param data data to store
      * @returns NodeMetadata
      */
-    public createNodeMetadata(nodeType: string, nameSpace: any, data: any, path: string, name?: string): Observable<any> {
+    createNodeMetadata(nodeType: string, nameSpace: any, data: any, path: string, name?: string): Observable<any> {
         let properties = {};
         for (let key in data) {
             if (data[key]) {
@@ -62,7 +63,7 @@ export class NodeService {
      * @param path path
      * @returns NodeMetadata
      */
-    public createNode(name: string, nodeType: string, properties: any, path: string): Observable<any> {
+    createNode(name: string, nodeType: string, properties: any, path: string): Observable<any> {
         let body = {
             name: name,
             nodeType: nodeType,
@@ -82,21 +83,21 @@ export class NodeService {
         });
     }
 
-    private cleanMetadataFromSemicolon(data: any): NodeMetadata {
+    private cleanMetadataFromSemicolon(data: NodeEntry): NodeMetadata {
         let metadata = {};
 
-        if (data && data.properties) {
-            for (let key in data.properties) {
+        if (data && data.entry && data.entry.properties) {
+            for (let key in data.entry.properties) {
                 if (key) {
                     if (key.indexOf(':') !== -1) {
-                        metadata [key.split(':')[1]] = data.properties[key];
+                        metadata [key.split(':')[1]] = data.entry.properties[key];
                     } else {
-                        metadata [key] = data.properties[key];
+                        metadata [key] = data.entry.properties[key];
                     }
                 }
             }
         }
 
-        return new NodeMetadata(metadata, data.nodeType);
+        return new NodeMetadata(metadata, data.entry.nodeType);
     }
 }

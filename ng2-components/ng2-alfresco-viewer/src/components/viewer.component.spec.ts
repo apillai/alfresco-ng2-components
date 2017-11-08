@@ -665,7 +665,7 @@ describe('ViewerComponent', () => {
         const nodeDetails = { name: displayName, id: '12', content: { mimeType: 'txt' }};
         const contentUrl = '/content/url/path';
         const alfrescoApiInstanceMock = {
-            nodes: { getNodeInfo: () => Promise.resolve(nodeDetails) },
+            nodes: { getNode: () => Promise.resolve(nodeDetails) },
             content: { getContentUrl: () => contentUrl }
         };
 

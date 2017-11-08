@@ -20,7 +20,7 @@ import {
     Component, ContentChild, EventEmitter, HostListener,
     Input, OnChanges, OnDestroy, Output, TemplateRef, ViewEncapsulation
 } from '@angular/core';
-import { MinimalNodeEntryEntity } from 'alfresco-js-api';
+import { NodeEntry } from 'alfresco-js-api';
 import { AlfrescoApiService, BaseEvent, LogService, RenditionsService } from 'ng2-alfresco-core';
 
 import { ViewerMoreActionsComponent } from './viewer-more-actions.component';
@@ -180,8 +180,10 @@ export class ViewerComponent implements OnDestroy, OnChanges {
                     resolve();
                 } else if (this.fileNodeId) {
                     this.isLoading = true;
-                    this.apiService.getInstance().nodes.getNodeInfo(this.fileNodeId).then(
-                        (data: MinimalNodeEntryEntity) => {
+                    this.apiService.nodesApi.getNode(this.fileNodeId).then(
+                        (result: NodeEntry) => {
+                            const data = result.entry;
+
                             this.mimeType = data.content.mimeType;
                             this.displayName = this.getDisplayName( data.name);
                             this.urlFileContent = this.apiService.getInstance().content.getContentUrl(data.id);

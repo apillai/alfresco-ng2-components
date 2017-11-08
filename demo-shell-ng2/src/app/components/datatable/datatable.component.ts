@@ -16,9 +16,9 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { MinimalNodeEntity } from 'alfresco-js-api';
 import { AlfrescoApiService, LogService } from 'ng2-alfresco-core';
 import { DataCellEvent, DataRowActionEvent, DataSorting, ObjectDataColumn, ObjectDataRow, ObjectDataTableAdapter } from 'ng2-alfresco-datatable';
-import { Observable } from 'rxjs/Rx';
 
 @Component({
     selector: 'datatable',
@@ -41,8 +41,8 @@ export class DataTableComponent {
 
     private _imageUrl: string = 'http://placehold.it/140x100';
     private _createdBy: any = {
-        name: 'Denys Vuika',
-        email: 'denys.vuika@alfresco.com'
+        name: 'John Doe',
+        email: 'john.doe@alfresco.com'
     };
 
     constructor(private apiService: AlfrescoApiService, private logService: LogService) {
@@ -181,26 +181,25 @@ export class DataTableComponent {
             include: ['path', 'properties', 'allowableOperations']
         };
 
-        Observable.fromPromise(this.apiService.getInstance().nodes
-            .getNodeInfo('-my-', opts)).subscribe((data) => {
-                this.logService.log('FUnNy');
-                this.logService.log(data);
-                // let objects = new ObjectDataTableAdapter([
-                //     {
-                //         id: data.id,
-                //         name: data.name,
-                //         createdBy: data.createdByUser.displayName,
-                //         createdOn: new Date(data.createdAt),
-                //         icon: 'material-icons://face'
-                //     }],
-                //     [
-                //         { type: 'image', key: 'icon', title: '', srTitle: 'Thumbnail' },
-                //         { type: 'text', key: 'id', title: 'Id', sortable: true },
-                //         { type: 'text', key: 'createdOn', title: 'Created On', sortable: true },
-                //         { type: 'text', key: 'name', title: 'Name', cssClass: 'full-width name-column', sortable: true },
-                //         { type: 'text', key: 'createdBy.name', title: 'Created By', sortable: true }
-                //     ]);
-                // this.data = objects;
-            });
+        this.apiService.nodesApi.getNode('-my-', opts).then((data: MinimalNodeEntity) => {
+            this.logService.log('FUnNy');
+            this.logService.log(data.entry);
+            let objects = new ObjectDataTableAdapter([
+                {
+                    icon: 'material-icons://face',
+                    id: data.entry.id,
+                    name: data.entry.name,
+                    createdBy: data.entry.createdByUser.displayName,
+                    createdOn: new Date(data.entry.createdAt)
+                }],
+                [
+                    { type: 'image', key: 'icon', title: '', srTitle: 'Thumbnail' },
+                    { type: 'text', key: 'id', title: 'Id', sortable: true },
+                    { type: 'text', key: 'name', title: 'Name', cssClass: 'full-width name-column', sortable: true },
+                    { type: 'text', key: 'createdOn', title: 'Created On', sortable: true },
+                    { type: 'text', key: 'createdBy.name', title: 'Created By', sortable: true }
+                ]);
+            this.data = objects;
+        });
     }
 }
