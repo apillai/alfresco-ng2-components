@@ -662,7 +662,7 @@ describe('ViewerComponent', () => {
 
     describe('display name property override by nodeId', () => {
         const displayName = 'the-name';
-        const nodeDetails = { name: displayName, id: '12', content: { mimeType: 'txt' }};
+        const nodeDetails = { entry: { name: displayName, id: '12', content: { mimeType: 'txt' }} };
         const contentUrl = '/content/url/path';
         const alfrescoApiInstanceMock = {
             nodes: { getNode: () => Promise.resolve(nodeDetails) },
