@@ -452,7 +452,7 @@ export class DocumentListComponent implements OnInit, OnChanges, AfterContentIni
         } else {
             this.documentListService
                 .getFolderNode(nodeId)
-                .then(node => {
+                .then((node: any) => {
                     this.folderNode = node;
                     this.currentFolderId = node.id;
                     this.skipCount = 0;
